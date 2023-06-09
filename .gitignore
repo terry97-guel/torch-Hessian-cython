@@ -1,0 +1,5 @@
+.vscode/c_cpp_properties.json
+excercise1/sum_numbers.so
+excercise1/build/*
+
+excercise2/build/*
