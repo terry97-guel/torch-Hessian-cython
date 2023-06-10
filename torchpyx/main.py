@@ -1,4 +1,7 @@
 # %%
+import ray
+
+# %%
 import time
 class timefn:
     def __enter__(self):
@@ -39,6 +42,39 @@ with timefn() as timer:
     temp1 = torch.stack(jac_ls)
     
 time_ele = timer.execution_time
+
+
+# %%
+import torch
+import ray
+
+# Define your model and jacobian function here
+# ...
+
+# Initialize Ray
+ray.init()
+
+@ray.remote
+def compute_jacobian(model, motor_control):
+    return jacobian(model, motor_control)
+
+motor_control = torch.rand([4,3])
+
+# Create a list to store the remote object references
+remote_jacs = []
+
+# Iterate over motor_control and submit tasks to Ray
+for motor_control_ in motor_control:
+    remote_jac = compute_jacobian.remote(model, motor_control_)
+    remote_jacs.append(remote_jac)
+
+# Retrieve the results from Ray
+jac_ls = ray.get(remote_jacs)
+
+# Shutdown Ray
+ray.shutdown()
+
+
 
 # %%
 with timefn() as timer:
